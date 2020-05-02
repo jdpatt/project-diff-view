@@ -1,0 +1,3 @@
+[console_scripts]
+project-diff = projectdiffview.__main__:main
+project-diff-cli = projectdiffview.cli:cli

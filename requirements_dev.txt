@@ -1,0 +1,11 @@
+# Tools
+black
+Click==7.0
+PySide2
+isort
+pre-commit
+pylint
+pytest
+tox
+pytest-qt
+pyinstaller
