@@ -3,8 +3,9 @@ import filecmp
 from collections import namedtuple
 from pathlib import Path
 
-import projectdiffview.defaults as defaults
 import pytest
+
+import projectdiffview.configuration as config
 from projectdiffview import folder
 
 
@@ -38,7 +39,8 @@ def test_recursively_compare_folders(data_folder):
 
     template = data_folder.joinpath("template")
     working = data_folder.joinpath("working")
-    dir_cmp = filecmp.dircmp(template, working, ignore=defaults.IGNORED)
+    configuration = config.Configuration()
+    dir_cmp = filecmp.dircmp(template, working, ignore=configuration.ignored)
     common_files, template_only, working_only = folder.recursively_compare_folders(dir_cmp)
 
     assert common_files == [

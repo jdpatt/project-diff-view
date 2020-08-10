@@ -23,10 +23,10 @@ Utility to make managing project directories easier.
 
 ## Changing the template path
 
-Open `defaults.py` in a text editor and update the `TEMPLATE_DIRECTORY` to the correct path.  The application should be able to support any path that pathlib supports.  You may have to re-install with `pip install -e .` from the root directory.
+Open `defaults.py` in a text editor and update the `template_directory` to the correct path.  The application should be able to support any path that pathlib supports.  You may have to re-install with `pip install -e .` from the root directory.
 
 ```python
-TEMPLATE_DIRECTORY = Path(__file__).parents[1].joinpath("template")
+template_directory = Path(__file__).parents[1].joinpath("template")
 ```
 
 ## Updating the builtin template

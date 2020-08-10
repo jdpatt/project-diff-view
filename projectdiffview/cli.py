@@ -4,9 +4,9 @@ import sys
 from pathlib import Path
 
 import click
+from PySide2.QtWidgets import QApplication
 
 from projectdiffview import projectdiffview, prompts
-from PySide2.QtWidgets import QApplication
 
 
 @click.group(
@@ -22,7 +22,7 @@ def cli(ctx, verbose, debug):
     ctx.obj = {"verbose": verbose, "debug": debug}
     if ctx.invoked_subcommand is None:
         app = QApplication([])
-        gui = projectdiffview.projectdiffview(verbose=ctx.obj["verbose"], debug=ctx.obj["debug"])
+        gui = projectdiffview.ProjectDiffView(verbose=ctx.obj["verbose"], debug=ctx.obj["debug"])
         gui.show()
         prompts.warn_user()
         sys.exit(app.exec_())
@@ -33,7 +33,7 @@ def cli(ctx, verbose, debug):
 def clone(ctx):
     """Clone the full template folder into the current working directory."""
     app = QApplication([])
-    gui = projectdiffview.projectdiffview(verbose=ctx.obj["verbose"], debug=ctx.obj["debug"])
+    gui = projectdiffview.ProjectDiffView(verbose=ctx.obj["verbose"], debug=ctx.obj["debug"])
     cwd = str(Path().cwd())
     click.echo(f"Cloning Template into: {cwd}")
     dir_util.copy_tree(
@@ -48,7 +48,7 @@ def clone(ctx):
 def cleanup(ctx):
     """Clone the full template folder into the current working directory."""
     app = QApplication([])
-    gui = projectdiffview.projectdiffview(verbose=ctx.obj["verbose"], debug=ctx.obj["debug"])
+    gui = projectdiffview.ProjectDiffView(verbose=ctx.obj["verbose"], debug=ctx.obj["debug"])
     gui.working_directory = Path().cwd()
     click.echo(f"Cleaning {gui.working_directory}...")
     gui.cleanup_working_folder()

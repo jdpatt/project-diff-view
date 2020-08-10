@@ -1,11 +1,12 @@
 import pytest
+
 from projectdiffview import projectdiffview
 
 
 @pytest.fixture
 def window(qtbot):
     """Pass the application to the test functions via a pytest fixture."""
-    new_window = projectdiffview.projectdiffview()
+    new_window = projectdiffview.ProjectDiffView()
     qtbot.add_widget(new_window)
     new_window.show()
     return new_window

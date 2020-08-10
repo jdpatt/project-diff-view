@@ -9,15 +9,14 @@ import typing
 import webbrowser
 from pathlib import Path
 
-import projectdiffview.defaults as defaults
+from PySide2 import QtCore, QtWidgets
+
 import projectdiffview.folder as folder
 import projectdiffview.prompts as prompts
-from projectdiffview import __version__
-from projectdiffview import defaults as defaults
-from projectdiffview import gui, logger
+from projectdiffview import __version__, gui, logger
 from projectdiffview.checkable_model import CheckableFileSystemModel
 from projectdiffview.colorable_model import ColorableFileSystemModel
-from PySide2 import QtCore, QtWidgets
+from projectdiffview.configuration import Configuration
 
 
 def working_directory_set(method):
@@ -32,7 +31,7 @@ def working_directory_set(method):
     return wrapper
 
 
-class projectdiffview(QtWidgets.QMainWindow, gui.Ui_MainWindow):
+class ProjectDiffView(QtWidgets.QMainWindow, gui.Ui_MainWindow):
     """Main powertree Window."""
 
     # pylint: disable=R0902
@@ -43,6 +42,8 @@ class projectdiffview(QtWidgets.QMainWindow, gui.Ui_MainWindow):
             "projectdiffview", "projectdiffview.log", is_verbose=verbose
         )
         self.setupUi(self)
+        self.config = Configuration()
+        self.config.load_config()
 
         # Setup the rest of the GUI.
         self.setWindowTitle("Project Directory Utility")
@@ -68,9 +69,9 @@ class projectdiffview(QtWidgets.QMainWindow, gui.Ui_MainWindow):
 
         if debug:
             # Use the local path under tests/data.
-            template_dir = defaults.DEBUG_TEMPLATE_DIRECTORY.resolve()
+            template_dir = self.config.debug_template_directory.resolve()
         else:
-            template_dir = resolve_network_or_local_template()
+            template_dir = self.resolve_network_or_local_template()
 
         self.template_directory: Path = self.load_template_directory(template_dir)
 
@@ -78,7 +79,7 @@ class projectdiffview(QtWidgets.QMainWindow, gui.Ui_MainWindow):
 
     def connect_actions(self) -> None:
         """Connect all the GUI elements to the business logic."""
-        self.actionExit.triggered.connect(quit_app)
+        self.actionExit.triggered.connect(self.quit_app)
         self.actionDocumentation.triggered.connect(documentation)
         self.browse.clicked.connect(self.browse_for_folder)
         self.directory_path.returnPressed.connect(self.directory_path_was_edited)
@@ -96,7 +97,7 @@ class projectdiffview(QtWidgets.QMainWindow, gui.Ui_MainWindow):
         new_directory = Path(
             QtWidgets.QFileDialog.getExistingDirectory(
                 self,
-                self.tr("Select the Project Directory"),
+                "Select the Project Directory",
                 "",
                 QtWidgets.QFileDialog.ShowDirsOnly | QtWidgets.QFileDialog.DontResolveSymlinks,
             )
@@ -159,9 +160,9 @@ class projectdiffview(QtWidgets.QMainWindow, gui.Ui_MainWindow):
         self.get_folder_differences()
 
     def get_folder_differences(self) -> None:
-        """Compare the template to the working directory and update the tree visuals accordingly."""
+        """Compare the template to the working directory and update the tree visuals."""
         dir_cmp = filecmp.dircmp(
-            str(self.template_directory), str(self.working_directory), ignore=defaults.IGNORED
+            str(self.template_directory), str(self.working_directory), ignore=self.config.ignored
         )
         self.common, self.template_only, self.working_only = folder.recursively_compare_folders(
             dir_cmp
@@ -260,20 +261,19 @@ class projectdiffview(QtWidgets.QMainWindow, gui.Ui_MainWindow):
             self.get_folder_differences()
             self.cleanup_has_run = True
 
+    def quit_app(self) -> None:
+        """Close the application."""
+        self.config.save_config()
+        QtCore.QCoreApplication.instance().quit()
 
-def quit_app() -> None:
-    """Close the application."""
-    QtCore.QCoreApplication.instance().quit()
+    def resolve_network_or_local_template(self) -> Path:
+        """Test to see if the network path exits or return the local template."""
+        network_dir = self.config.template_directory
+        if network_dir.exists():
+            return network_dir
+        return Path(__file__).parents[1].joinpath("template").resolve()
 
 
 def documentation() -> None:
     """Open the documentation for powertree."""
     webbrowser.open("https://eng.plexus.com/git/projects/PLXSSPF/repos/projectdiffview/browse")
-
-
-def resolve_network_or_local_template() -> Path:
-    """Test to see if the network path exits or return the local template."""
-    network_dir = defaults.TEMPLATE_DIRECTORY
-    if network_dir.exists():
-        return network_dir
-    return Path(__file__).parents[1].joinpath("template").resolve()

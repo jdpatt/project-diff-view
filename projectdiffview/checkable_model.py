@@ -1,7 +1,6 @@
 """Model to watch the filesystem and report it to the QTreeView."""
 from pathlib import Path
 
-from projectdiffview import defaults
 from PySide2 import QtCore, QtGui, QtWidgets
 
 
@@ -20,7 +19,7 @@ class CheckableFileSystemModel(QtWidgets.QFileSystemModel):
         if role == QtCore.Qt.BackgroundRole:
             file_path = Path(self.filePath(index))
             if file_path in self.view.template_only:
-                return QtGui.QColor(defaults.COLOR_DELETED)
+                return QtGui.QColor(self.view.config.color_deleted)
         elif role == QtCore.Qt.CheckStateRole and index.column() == 0:
             return self.check_state(index)
 

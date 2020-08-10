@@ -20,7 +20,7 @@ def confirm_action(title, informative=None, detail=None) -> bool:
             button.click()
             break
 
-    text_boxes = prompt.findChildren(QtWidgets.QTextEdit)
+    text_boxes = list(prompt.findChildren(QtWidgets.QTextEdit))
     if text_boxes:
         text_boxes[0].setFixedSize(800, 300)
 
