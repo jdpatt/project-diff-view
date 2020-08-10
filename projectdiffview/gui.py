@@ -3,19 +3,33 @@
 ################################################################################
 ## Form generated from reading UI file 'gui.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.14.0
+## Created by: Qt User Interface Compiler version 5.15.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import QCoreApplication, QMetaObject, QRect
+from PySide2.QtCore import (
+    QCoreApplication,
+    QDate,
+    QDateTime,
+    QMetaObject,
+    QObject,
+    QPoint,
+    QRect,
+    QSize,
+    Qt,
+    QTime,
+    QUrl,
+)
 from PySide2.QtGui import (
     QBrush,
     QColor,
     QConicalGradient,
+    QCursor,
     QFont,
     QFontDatabase,
     QIcon,
+    QKeySequence,
     QLinearGradient,
     QPainter,
     QPalette,
@@ -42,7 +56,7 @@ from PySide2.QtWidgets import (
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        if MainWindow.objectName():
+        if not MainWindow.objectName():
             MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1200, 600)
         MainWindow.setDocumentMode(True)
@@ -66,6 +80,8 @@ class Ui_MainWindow(object):
         self.actionConsole_Visibility.setChecked(True)
         self.actionSave_As = QAction(MainWindow)
         self.actionSave_As.setObjectName("actionSave_As")
+        self.actionSettings = QAction(MainWindow)
+        self.actionSettings.setObjectName("actionSettings")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_3 = QVBoxLayout(self.centralwidget)
@@ -201,9 +217,10 @@ class Ui_MainWindow(object):
 
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
+        self.menuFile.addAction(self.actionSettings)
         self.menuFile.addAction(self.actionExit)
         self.menuHelp.addAction(self.actionDocumentation)
-        # self.menuHelp.addAction(self.actionAbout)
+        self.menuHelp.addAction(self.actionAbout)
 
         self.retranslateUi(MainWindow)
 
@@ -263,6 +280,7 @@ class Ui_MainWindow(object):
             QCoreApplication.translate("MainWindow", "Ctrl+Shift+S", None)
         )
         # endif // QT_CONFIG(shortcut)
+        self.actionSettings.setText(QCoreApplication.translate("MainWindow", "Settings", None))
         self.label.setText(QCoreApplication.translate("MainWindow", "Project Directory", None))
         self.browse.setText(QCoreApplication.translate("MainWindow", "Browse", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", "Template Version:", None))
