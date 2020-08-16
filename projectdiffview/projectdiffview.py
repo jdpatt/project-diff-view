@@ -17,6 +17,7 @@ from projectdiffview import __version__, gui, logger
 from projectdiffview.checkable_model import CheckableFileSystemModel
 from projectdiffview.colorable_model import ColorableFileSystemModel
 from projectdiffview.configuration import Configuration
+from projectdiffview.settings_widget import SettingsDialog
 
 
 def working_directory_set(method):
@@ -79,7 +80,8 @@ class ProjectDiffView(QtWidgets.QMainWindow, gui.Ui_MainWindow):
 
     def connect_actions(self) -> None:
         """Connect all the GUI elements to the business logic."""
-        self.actionExit.triggered.connect(self.quit_app)
+        self.actionExit.triggered.connect(quit_app)
+        self.actionSettings.triggered.connect(self.update_settings)
         self.actionDocumentation.triggered.connect(documentation)
         self.browse.clicked.connect(self.browse_for_folder)
         self.directory_path.returnPressed.connect(self.directory_path_was_edited)
@@ -261,11 +263,6 @@ class ProjectDiffView(QtWidgets.QMainWindow, gui.Ui_MainWindow):
             self.get_folder_differences()
             self.cleanup_has_run = True
 
-    def quit_app(self) -> None:
-        """Close the application."""
-        self.config.save_config()
-        QtCore.QCoreApplication.instance().quit()
-
     def resolve_network_or_local_template(self) -> Path:
         """Test to see if the network path exits or return the local template."""
         network_dir = self.config.template_directory
@@ -273,6 +270,14 @@ class ProjectDiffView(QtWidgets.QMainWindow, gui.Ui_MainWindow):
             return network_dir
         return Path(__file__).parents[1].joinpath("template").resolve()
 
+    def update_settings(self) -> None:
+        """Update the program's settings."""
+        dialog = SettingsDialog(self.config)
+        dialog.exec_()
+
+def quit_app() -> None:
+    """Close the application."""
+    QtCore.QCoreApplication.instance().quit()
 
 def documentation() -> None:
     """Open the documentation for powertree."""

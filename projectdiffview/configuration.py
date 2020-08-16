@@ -1,9 +1,12 @@
 """Default settings or constants for projectdiffview."""
 import filecmp
+import logging
 from dataclasses import dataclass
 from pathlib import Path
 
 from PySide2 import QtCore, QtGui
+
+LOG = logging.getLogger("projectdiffview.config")
 
 
 @dataclass
@@ -21,12 +24,15 @@ class Configuration:
     def load_config(self):
         """Load the settings into ProjectDiffView."""
         settings = QtCore.QSettings()
+        LOG.info("Loading Configuration...")
         for item in self.__dict__:
             self.__dict__[item] = settings.value(item)
 
     def save_config(self):
         """Save the settings out from ProjectDiffView."""
+        LOG.info("Saving Configuration...")
         settings = QtCore.QSettings()
         for key, value in self.__dict__.items():
+            LOG.debug(f"Saving {value} to {key}")
             settings.setValue(key, value)
         settings.sync()
